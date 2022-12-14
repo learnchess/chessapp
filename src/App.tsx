@@ -1,5 +1,5 @@
 import "./App.css";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Chessground from "@react-chess/chessground"
 import "chessground/assets/chessground.base.css";
 import "chessground/assets/chessground.brown.css";
@@ -8,35 +8,37 @@ import { ShortMove } from "../node_modules/@types/chess.js";
 import { Chess } from 'chess.js';
 import { findConfigFile } from "typescript";
 
+//defines fenNoUpdate where it won't repeatedly go back to start
+const startingFen = "rnbq1rk1/ppp1ppbp/5np1/3p4/2PP4/5NP1/PP2PPBP/RNBQ1RK1 b - c3 0 6"
+const chess = new Chess(startingFen);
+let fenNoUpdate = startingFen;
+
 const App: React.FC = () => {
 
-const[fren, setFren] = useState("rnbqk1nr/ppp1ppb1/6p1/3p3p/3P1P2/6PP/PPP1P1B1/RNBQK1NR b KQkq f3 0 5");
-const chess = new Chess(fren);
-const handleMove = (from: string, to: string) => {
-  // chess.move({from, to});
-  // setFren(chess.fen())
-  let newMove = chess.move({from, to});
+const[runFrame, runThatFrame] = useState(true);
 
-  if(newMove==null) {  
-    setFren(chess.fen());
+const handleMove = (one: string, two: string) => {
+  let NewMove = chess.move({from: one, to: two})
+  fenNoUpdate = chess.fen();
+  runThatFrame(!runFrame);
+  if(NewMove!=null) {
+ if(NewMove.from=='e7' && NewMove.to=='e6') {
+    console.log("you are correct!")
   }
-
   else {
-    chess.move({from, to})
+    console.log("you're incorrect. try again.")
+  }
 }
   };  
 
   return (
-    console.log(fren + "this is the fren that's playing"),
+
     <div className="flex-center">
       <Chessground
         width={400}
         height={400}
         config = {{
-          fen: fren,
-          movable: {
-            
-          },
+          fen:  fenNoUpdate,
           events: {
             move: (orig, dest) => handleMove(
             orig, dest)
