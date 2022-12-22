@@ -23,3 +23,8 @@
   .item {
     padding-right: 20px;
   }
+
+  #item2 {
+    width: 400px;
+    background-color: rgb(147, 126, 126);
+  }

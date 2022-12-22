@@ -6,22 +6,37 @@ import "chessground/assets/chessground.brown.css";
 import "chessground/assets/chessground.cburnett.css";
 import { Chess } from 'chess.js';
 import Typography from '@mui/material/Typography';
+import Notation from '../Components/Notation'
+
 
 const startingFen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 const chess = new Chess(startingFen);
-chess.loadPgn(
-    "1. e4 e5 {king's pawn opening} 2. Nf3 Nc6 3. Bc4 Bc5 {giuoco piano} *"
-  )
 let orientationColor = chess.turn();
 let fenNoUpdate = startingFen;
+let history = {};
+let move=1;
+let legalMove = false;
 
 const Analysis: React.FC = () => {
-
+    let props = {
+        move: move,
+        history: history,
+        legalMove: legalMove
+    }
+    
     const[runFrame, runThatFrame] = useState(true);
 
     const handleMove = (one: string, two: string) => {
         let NewMove = chess.move({from: one, to: two})
         fenNoUpdate = chess.fen();
+        history = chess.history()
+        if(NewMove!=null) {
+        legalMove=true;
+        move++;
+        }
+        else {
+        legalMove=false;
+        }
         runThatFrame(!runFrame);
     }
 
@@ -46,8 +61,9 @@ const Analysis: React.FC = () => {
         <div className="item">
         {orientationColor==='w' ? <Typography variant="h3">White To Move</Typography > : <Typography variant="h3">Black To Move</Typography>}
         </div>
-        <div className="item">
-        <Typography variant="h2">{chess.pgn()}</Typography>
+        <div className="item" id="item2">
+        {move>1 ? <Notation {...props}/> : null}
+
         </div>
       </div>
     </div>
